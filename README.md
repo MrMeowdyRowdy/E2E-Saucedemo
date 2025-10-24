@@ -93,7 +93,7 @@ Though it is prefferable to open the report using the provided link when the tes
 **Example (Windows):**
 
 ```
-file:///C:/Users/YOUR_USER/Desktop/E2E-test/untitled/target/site/serenity/index.html
+file:///C:/Users/YOUR_USER/path-to/e2e-saucedemo/target/site/serenity/index.html
 ```
 
 * Open `index.html` in a browser to view detailed interactive reports
