@@ -1,0 +1,18 @@
+Feature: Purchase flow on www.saucedemo.com
+  As a user
+  I want to login, add items to cart, and complete a checkout
+  So that I reach the purchase success page.
+
+  Background:
+    Given the user is on the Sauce Demo login page
+
+  Scenario: Login, add items, view cart and complete purchase
+    When the user logs in with username "standard_user" and password "secret_sauce"
+    And the user adds the following items to the cart:
+      | Sauce Labs Backpack     |
+      | Sauce Labs Bolt T Shirt |
+    And the user opens the cart
+    And the user proceeds to checkout with:
+      | firstName | lastName | postalCode |
+      | John      | Doe      | 90210      |
+    Then the purchase should be completed successfully

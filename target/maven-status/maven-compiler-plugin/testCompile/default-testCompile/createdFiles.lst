@@ -1,0 +1,13 @@
+org\example\runners\CucumberTestSuite.class
+org\example\ui\CheckoutInfoPage.class
+org\example\ui\CheckOutOverviewPage.class
+org\example\tasks\OpenCart.class
+org\example\ui\LoginPage.class
+org\example\tasks\LoginWithCredentials.class
+org\example\questions\PurchaseSuccess.class
+org\example\ui\ProductsPage.class
+org\example\tasks\AddProductToCart.class
+org\example\ui\CartPage.class
+org\example\steps\PurchaseSteps.class
+org\example\ui\CheckoutCompletePage.class
+org\example\tasks\CheckoutInformation.class
