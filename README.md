@@ -78,6 +78,12 @@ mvn clean verify
 * Generates test reports
 * Default browser: Chrome
 
+In some cases the browser used may detect the password used is leaked and advise to change it. This is a browser feature and in some cases interrupt the test excecution. To avoid this, you can use a different browser such as Firefox by specifying it in the command line:
+
+```bash
+mvn clean verify -Dwebdriver.driver=firefox
+```
+
 ---
 
 ## Test Results & Reports
@@ -97,6 +103,7 @@ file:///C:/Users/YOUR_USER/path-to/e2e-saucedemo/target/site/serenity/index.html
 ```
 
 * Open `index.html` in a browser to view detailed interactive reports
-* Shows scenario steps, and failures. In this case screenshots were not taken.
+* Shows scenario steps, and failures and screenshots.
+
 
 
