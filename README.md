@@ -56,7 +56,7 @@ Key dependencies in `pom.xml`:
 
 ## How to Run the Tests
 
-### 1️⃣ Open Terminal / Command Prompt
+### Open Terminal / Command Prompt
 
 Navigate to the **project root directory** (where `pom.xml` is located):
 
@@ -67,7 +67,7 @@ Or in case you are working with intelliJ IDEA, you can open the terminal directl
 
 ---
 
-### 2️⃣ Run all tests
+### Run all tests
 
 ```bash
 mvn clean verify
