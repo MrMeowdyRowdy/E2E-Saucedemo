@@ -79,6 +79,14 @@
                             <goal>aggregate</goal>
                         </goals>
                     </execution>
+                    <!-- fail the build on test failures, after the report is written -->
+                    <execution>
+                        <id>serenity-check</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
                 </executions>
             </plugin>
 
@@ -88,6 +96,8 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
                 <configuration>
+                    <!-- let the report be aggregated even when tests fail; serenity:check fails the build -->
+                    <testFailureIgnore>true</testFailureIgnore>
                     <includes>
                         <include>**/*Test*.java</include>
                         <include>**/*TestSuite*.java</include>

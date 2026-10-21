@@ -1,109 +1,63 @@
-# Serenity BDD + Screenplay Saucedemo Tests
+# E2E-Saucedemo
 
-## Project Overview
+UI end-to-end tests for [saucedemo.com](https://www.saucedemo.com), written with Serenity BDD (Screenplay pattern) and Cucumber.
 
-This project is a **Screenplay-style Serenity BDD test suite** for [saucedemo.com](https://www.saucedemo.com).
-It tests an end-to-end scenario:
+[![E2E](https://github.com/MrMeowdyRowdy/E2E-Saucedemo/actions/workflows/e2e.yml/badge.svg)](https://github.com/MrMeowdyRowdy/E2E-Saucedemo/actions/workflows/e2e.yml)
+[Latest report](https://mrmeowdyrowdy.github.io/E2E-Saucedemo/)
 
-1. User logs in with valid credentials.
-2. User adds one or more products to the shopping cart.
-3. User proceeds to checkout and fills in checkout information.
-4. User completes the purchase and verifies the **Purchase Success** page.
+## What it tests
 
----
+Core flows of the Sauce Demo shop: login, cart, sorting, checkout and logout. Failures assert the exact error text; sorting asserts the whole displayed order; checkout asserts that the overview adds up (sum of item prices = item total, item total + tax = total).
 
-## Prerequisites
+| Feature | Scenarios | Tags |
+|---|---|---|
+| `purchase_flow` : log in, add two items, check out, see the confirmation | 1 | `@smoke` `@regression` |
+| `login` : locked-out user | 1 | `@smoke` `@regression` |
+| `login` : wrong password, empty username, empty password | 3 | `@regression` |
+| `cart` : add items, badge count, cart contents, remove, badge hides | 3 | `@regression` |
+| `sorting` : price low to high, name Z to A | 2 | `@regression` |
+| `checkout` : missing first name, missing postal code, price arithmetic | 3 | `@regression` |
+| `logout` : back to the login page | 1 | `@regression` |
+| `known_issues` : `problem_user` bugs (below) | 3 | `@known-issue` |
 
-* Java 17
-* Maven 3.9.X
-* Chrome browser installed
-* Internet connection
-* IDE IntelliJ IDEA
+Totals: 2 `@smoke`, 14 `@regression`, 3 `@known-issue` (not part of the default run).
 
----
+## Design choices
 
-## Project Structure
+- **Screenplay instead of page objects.** Tests describe what an actor does (tasks) and what the actor checks (questions); the page details live in separate UI targets. Steps stay readable and tasks are reusable.
+- **Layers** (all under `src/test/java/org/example/`):
+  - `ui/` : targets (locators) per page.
+  - `tasks/` : `LoginWithCredentials`, `AddProductToCart`, `RemoveProductFromCart`, `SortProducts`, `OpenCart`, `EnterCheckoutDetails`, `CheckoutInformation`, `Logout`.
+  - `questions/` : `ShownError`, `CartBadge`, `CartContents`, `ProductList`, `OrderSummary`, `PurchaseSuccess` (and `Money`, which parses prices with `BigDecimal`, never floating point).
+  - `steps/` : Cucumber step definitions (`PurchaseSteps`) that only call tasks and questions.
+  - `runners/` : `CucumberTestSuite`, the JUnit runner.
+- **Features** are in `src/test/resources/features/`, one file per area.
+- **Tags.** `@smoke` is the fast core (a valid purchase and one login failure). `@regression` is everything that must stay green. `@known-issue` is kept apart on purpose.
+- **Known-issue policy.** The `problem_user` account has planted bugs. Those scenarios assert the buggy behaviour as it is today, so they pass while the bug exists and fail the day the site is fixed. The runner excludes `@known-issue` by default, so a deliberate site bug never turns the main build red.
+  - Every product shows the same image.
+  - Sorting by name (Z to A) does not reorder the list.
+  - The last name cannot be entered at checkout, so the form fails with "Last Name is required".
+- **Browser config lives in `serenity.conf`**, not in the pom or the workflow, so local runs and CI behave the same: headless Chrome at 1440x900, `--no-sandbox --disable-dev-shm-usage` for CI containers, and Chrome prefs plus `--disable-features=PasswordLeakDetection` that stop the leaked-password popup (the shared demo password would otherwise block clicks). The `headed` environment turns headless off for debugging.
+- **Reports** come from the Serenity Maven plugin, with a screenshot per step. Tests do not stop the build on their own: the report is aggregated first, then `serenity:check` fails the build, so a red run still has a report.
 
-```
-src
-├── main
-│   
-├── test
-│   ├── java/org/example/ui/                # Screenplay UI targets (Products, Cart, Checkout, etc.)
-│   ├── java/org/example/tasks/             # Screenplay tasks (Login, AddProducts, Checkout)
-│   ├── java/org/example/questions/         # Screenplay questions (PurchaseSuccess)
-│   ├── java/org/example/stepdefinitions/   # Cucumber step definitions
-│   └── java/org/example/runners/           # CucumberTestSuite.java (test runner)
-└── resources/features/                     # Cucumber .feature files
-```
+## Run it
 
----
-
-## Setup & Dependencies
-
-The project uses **Maven** to manage dependencies.
-Key dependencies in `pom.xml`:
-
-* `serenity-core`
-* `serenity-screenplay`
-* `serenity-screenplay-webdriver`
-* `serenity-cucumber6` (or `serenity-cucumber7` depending on your Cucumber version)
-* `selenium-java`
-
-> Ensure the dependencies match your Serenity version.
-
----
-
-## How to Run the Tests
-
-### Open Terminal / Command Prompt
-
-Navigate to the **project root directory** (where `pom.xml` is located):
+Prerequisites: Java 17 or newer, Google Chrome, internet access. Maven is not needed; the wrapper downloads it.
 
 ```bash
-cd C:\Users\YOUR_USER\Desktop\E2E-test\untitled
-```
-Or in case you are working with intelliJ IDEA, you can open the terminal directly in the IDE. Or use the IDE's built-in Maven support to run goals.
-
----
-
-### Run all tests
-
-```bash
-mvn clean verify
+./mvnw verify                                   # default run: everything except @known-issue, headless
+./mvnw verify -Dcucumber.filter.tags="@smoke"   # fast core only
+./mvnw verify -Dcucumber.filter.tags="@known-issue"   # the problem_user bugs
+./mvnw verify -Denvironment=headed              # visible browser for debugging
 ```
 
-* Compiles the project
-* Executes Cucumber scenarios via Serenity
-* Generates test reports
-* Default browser: Chrome
+On Windows use `mvnw.cmd`. The report is written to `target/site/serenity/index.html`.
 
-In some cases the browser used may detect the password used is leaked and advise to change it. This is a browser feature and in some cases interrupt the test excecution. To avoid this, you can use a different browser such as Firefox by specifying it in the command line:
+## CI
 
-```bash
-mvn clean verify -Dwebdriver.driver=firefox
-```
+`.github/workflows/e2e.yml` runs `./mvnw -B verify` on GitHub Actions on every push and pull request to `master`, nightly at 05:00 UTC, and on demand (`workflow_dispatch`). The Serenity report is always uploaded as a build artifact. On `master` it is also published to GitHub Pages, even when tests failed: [mrmeowdyrowdy.github.io/E2E-Saucedemo](https://mrmeowdyrowdy.github.io/E2E-Saucedemo/).
 
----
+## Findings
 
-## Test Results & Reports
-
-Serenity generates HTML reports automatically in:
-
-```
-<project_root>\target\site\serenity\index.html
-```
-
-Though it is prefferable to open the report using the provided link when the tests finish executing in the terminal.
-
-**Example (Windows):**
-
-```
-file:///C:/Users/YOUR_USER/path-to/e2e-saucedemo/target/site/serenity/index.html
-```
-
-* Open `index.html` in a browser to view detailed interactive reports
-* Shows scenario steps, and failures and screenshots.
-
-
-
+- Saucedemo's shared demo password triggers Chrome's leaked-password popup, which can block clicks. The Chrome prefs in `serenity.conf` disable it.
+- Serenity 4.x needs the matching `serenity-cucumber` and `serenity-maven-plugin` versions; they are pinned together in `pom.xml` (`serenity.version`).
