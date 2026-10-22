@@ -1,24 +1,18 @@
 @regression
-Feature: Purchase flow on www.saucedemo.com
-  As a user
-  I want to login, add items to cart, and complete a checkout
-  So that I reach the purchase success page.
+Feature: Purchase flow
+  A user logs in, adds items to the cart and completes a checkout.
 
   Background:
     Given the user is on the Sauce Demo login page
 
-  Scenario Outline: Login, add items, view cart and complete purchase
-    When the user logs in with username "<username>" and password "<password>"
+  @smoke
+  Scenario: Log in, add items, check out and see the confirmation
+    When the user logs in with username "standard_user" and password "secret_sauce"
     And the user adds the following items to the cart:
-      | <item1> |
-      | <item2> |
+      | Sauce Labs Backpack     |
+      | Sauce Labs Bolt T-Shirt |
     And the user opens the cart
-    And the user proceeds to checkout with:
+    And the user completes checkout with:
       | firstName | lastName | postalCode |
-      | <firstName> | <lastName> | <postalCode> |
+      | John      | Doe      | 90210      |
     Then the purchase should be completed successfully
-
-    @smoke
-    Examples:
-      | username      | password     | firstName | lastName | postalCode | item1                | item2                  |
-      | standard_user | secret_sauce | John      | Doe      | 90210      | Sauce Labs Backpack  | Sauce Labs Bolt T-Shirt |

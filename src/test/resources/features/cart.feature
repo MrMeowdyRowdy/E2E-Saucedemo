@@ -28,4 +28,4 @@ Feature: Cart
       | Sauce Labs Onesie |
     And the user removes the following items from the cart:
       | Sauce Labs Onesie |
-    Then the cart badge should show 0
+    Then the cart badge should not be shown

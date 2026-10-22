@@ -4,7 +4,6 @@ import net.serenitybdd.screenplay.targets.Target;
 import org.openqa.selenium.By;
 
 public class LoginPage {
-    public static final String URL = "https://www.saucedemo.com/";
 
     public static final Target USERNAME = Target.the("username field")
             .located(By.id("user-name"));

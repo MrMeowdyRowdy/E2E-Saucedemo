@@ -3,7 +3,7 @@ package org.example.ui;
 import net.serenitybdd.screenplay.targets.Target;
 import org.openqa.selenium.By;
 
-public class CheckOutOverviewPage {
+public class CheckoutOverviewPage {
 
     public static final Target ITEM_PRICES = Target.the("overview item prices")
             .located(By.className("inventory_item_price"));

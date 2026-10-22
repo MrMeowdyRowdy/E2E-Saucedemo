@@ -10,44 +10,36 @@
 
     <properties>
         <serenity.version>4.1.14</serenity.version>
-        <serenity.cucumber.version>4.1.14</serenity.cucumber.version>
-        <webdriver.driver>chrome</webdriver.driver>
-        <encoding>UTF-8</encoding>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
     </properties>
 
     <dependencies>
-        <!-- Serenity core -->
         <dependency>
             <groupId>net.serenity-bdd</groupId>
             <artifactId>serenity-core</artifactId>
             <version>${serenity.version}</version>
         </dependency>
 
-        <!-- Screenplay pattern -->
         <dependency>
             <groupId>net.serenity-bdd</groupId>
             <artifactId>serenity-screenplay</artifactId>
             <version>${serenity.version}</version>
         </dependency>
 
-        <!-- Webdriver integration -->
         <dependency>
             <groupId>net.serenity-bdd</groupId>
             <artifactId>serenity-screenplay-webdriver</artifactId>
             <version>${serenity.version}</version>
         </dependency>
 
-        <!-- Cucumber integration -->
         <dependency>
             <groupId>net.serenity-bdd</groupId>
             <artifactId>serenity-cucumber</artifactId>
-            <version>${serenity.cucumber.version}</version>
+            <version>${serenity.version}</version>
         </dependency>
 
-        <!-- JUnit -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -55,7 +47,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Optional assertions -->
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest</artifactId>
@@ -66,8 +57,7 @@
 
     <build>
         <plugins>
-            <!-- Serenity reports plugin -->
-            <plugin>
+                <plugin>
                 <groupId>net.serenity-bdd.maven.plugins</groupId>
                 <artifactId>serenity-maven-plugin</artifactId>
                 <version>${serenity.version}</version>
@@ -90,8 +80,7 @@
                 </executions>
             </plugin>
 
-            <!-- Run tests -->
-            <plugin>
+                <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
@@ -99,8 +88,7 @@
                     <!-- let the report be aggregated even when tests fail; serenity:check fails the build -->
                     <testFailureIgnore>true</testFailureIgnore>
                     <includes>
-                        <include>**/*Test*.java</include>
-                        <include>**/*TestSuite*.java</include>
+                        <include>**/*TestSuite.java</include>
                     </includes>
                 </configuration>
             </plugin>

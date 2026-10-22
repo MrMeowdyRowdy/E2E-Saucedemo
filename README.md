@@ -27,9 +27,9 @@ Totals: 2 `@smoke`, 14 `@regression`, 3 `@known-issue` (not part of the default 
 - **Screenplay instead of page objects.** Tests describe what an actor does (tasks) and what the actor checks (questions); the page details live in separate UI targets. Steps stay readable and tasks are reusable.
 - **Layers** (all under `src/test/java/org/example/`):
   - `ui/` : targets (locators) per page.
-  - `tasks/` : `LoginWithCredentials`, `AddProductToCart`, `RemoveProductFromCart`, `SortProducts`, `OpenCart`, `EnterCheckoutDetails`, `CheckoutInformation`, `Logout`.
+  - `tasks/` : `LoginWithCredentials`, `AddProductToCart`, `RemoveProductFromCart`, `SortProducts`, `OpenCart`, `EnterCheckoutDetails`, `CompleteCheckout`, `Logout`.
   - `questions/` : `ShownError`, `CartBadge`, `CartContents`, `ProductList`, `OrderSummary`, `PurchaseSuccess` (and `Money`, which parses prices with `BigDecimal`, never floating point).
-  - `steps/` : Cucumber step definitions (`PurchaseSteps`) that only call tasks and questions.
+  - `steps/` : Cucumber step definitions (`SauceDemoSteps`) that only call tasks and questions.
   - `runners/` : `CucumberTestSuite`, the JUnit runner.
 - **Features** are in `src/test/resources/features/`, one file per area.
 - **Tags.** `@smoke` is the fast core (a valid purchase and one login failure). `@regression` is everything that must stay green. `@known-issue` is kept apart on purpose.
@@ -38,7 +38,7 @@ Totals: 2 `@smoke`, 14 `@regression`, 3 `@known-issue` (not part of the default 
   - Sorting by name (Z to A) does not reorder the list.
   - The last name cannot be entered at checkout, so the form fails with "Last Name is required".
 - **Browser config lives in `serenity.conf`**, not in the pom or the workflow, so local runs and CI behave the same: headless Chrome at 1440x900, `--no-sandbox --disable-dev-shm-usage` for CI containers, and Chrome prefs plus `--disable-features=PasswordLeakDetection` that stop the leaked-password popup (the shared demo password would otherwise block clicks). The `headed` environment turns headless off for debugging.
-- **Reports** come from the Serenity Maven plugin, with a screenshot per step. Tests do not stop the build on their own: the report is aggregated first, then `serenity:check` fails the build, so a red run still has a report.
+- **Reports** come from the Serenity Maven plugin, with a screenshot per action. Tests do not stop the build on their own: the report is aggregated first, then `serenity:check` fails the build, so a red run still has a report.
 
 ## Run it
 
@@ -60,4 +60,4 @@ On Windows use `mvnw.cmd`. The report is written to `target/site/serenity/index.
 ## Findings
 
 - Saucedemo's shared demo password triggers Chrome's leaked-password popup, which can block clicks. The Chrome prefs in `serenity.conf` disable it.
-- Serenity 4.x needs the matching `serenity-cucumber` and `serenity-maven-plugin` versions; they are pinned together in `pom.xml` (`serenity.version`).
+- Serenity 4.x needs the matching `serenity-cucumber` and `serenity-maven-plugin` versions; they all use the single `serenity.version` property in `pom.xml`.
